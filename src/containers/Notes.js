@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { API, Storage } from "aws-amplify";
 import { FormGroup, FormControl, ControlLabel } from "react-bootstrap";
+import { s3Upload } from "../libs/awsLib";
 import LoaderButton from "../components/LoaderButton";
 import config from "../config";
 import "./Notes.css";
@@ -47,17 +48,36 @@ export default function Notes(props) {
     file.current = event.target.files[0];
   }
 
+  function saveNote(note) {
+    return API.put("notes", `/notes/${props.match.params.id}`, {
+      body: note
+    });
+  }
+   
   async function handleSubmit(event) {
     let attachment;
     event.preventDefault();
-    
     if (file.current && file.current.size > config.MAX_ATTACHMENT_SIZE) {
-      alert(
-        `Please pick a file smaller than ${config.MAX_ATTACHMENT_SIZE / 1000000} MB.`
-      );
+      alert( `Please pick a file smaller than ${config.MAX_ATTACHMENT_SIZE / 1000000} MB.`);
       return;
     }
+
     setIsLoading(true);
+    
+    try {
+      if (file.current) {
+        attachment = await s3Upload(file.current);
+      }
+
+      await saveNote({
+        content,
+        attachment: attachment || note.attachment
+      });
+      props.history.push("/");
+    } catch (e) {
+      alert(e);
+      setIsLoading(false);
+    }
   }
   
   async function handleDelete(event) {
