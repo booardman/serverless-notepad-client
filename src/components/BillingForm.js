@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FormGroup, FormControl, ControlLabel } from "react-bootstrap";
-import { CardElement, injectStripe } from "reactstripe-elements";
+import { CardElement, injectStripe } from "react-stripe-elements";
 import LoaderButton from "./LoaderButton";
 import { useFormFields } from "../libs/hooksLib";
 import "./BillingForm.css";
@@ -46,7 +46,7 @@ function BillingForm({ isLoading, onSubmit, ...props }) {
       </FormGroup>
       <hr />
       <FormGroup bsSize="large" controlId="name">
-        <ControlLabel>Cardholder&apos;sname</ControlLabel>
+        <ControlLabel>Cardholder&apos;s name</ControlLabel>
         <FormControl
           type="text"
           value={fields.name}
