@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import { FormGroup, FormControl, ControlLabel } from "react-bootstrap";
+import { API } from "aws-amplify";
 import LoaderButton from "../components/LoaderButton";
 import config from "../config";
 import "./NewNote.css";
@@ -27,7 +28,22 @@ export default function NewNote(props) {
     }
     
     setIsLoading(true);
+    
+    try {
+      await createNote({ content });
+      props.history.push("/");
+    } catch (e) {
+      alert(e);
+      setIsLoading(false);
+    }
   }
+
+  function createNote(note) {
+    return API.post("notes", "/notes", {
+      body: note
+    });
+  }
+  
   return (
     <div className="NewNote">
       <form onSubmit={handleSubmit}>
